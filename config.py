@@ -21,7 +21,7 @@ class Config(Coqpit):
     flags.plot = True
     flags.save = True
 
-
+@dataclass
 class Config2(Config):
     paths = Coqpit()
     paths.data_folder = "../data_2"
