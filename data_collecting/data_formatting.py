@@ -9,8 +9,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 from glob import glob
-from config import Config
-from utils import date2timestamp
+from data_collecting.config import Config
+from data_collecting.utils import date2timestamp
 
 
 def read_data_wind(path):
