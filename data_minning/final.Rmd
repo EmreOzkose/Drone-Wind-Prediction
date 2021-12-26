@@ -1,0 +1,73 @@
+---
+title: "BBM713 - Data Mining"
+subtitle: "2021 Fall Final Project Report"
+author: "Doç. Dr. Burkay Genç and Some Other Guy"
+date: "due 05/01/2022"
+output: 
+  html_document: 
+    toc: yes
+    theme: journal
+    number_sections: yes
+    df_print: tibble
+---
+
+# Summary
+
+Here we outline our project and explain our motivation in doing this project in one paragraph.
+
+In every part of the below document, you should both include textual explanations (like this) and R code of your study:
+
+```{r}
+print("like this...")
+```
+
+Your code should be runnable. You should finally knit this document as a pdf file and submit the pdf file (only) at [this form](https://forms.gle/idXra1iXMeg8poUr6).
+
+
+# Introduction
+
+It is time to explain more about where the data comes from, why we are doing this, what are we expecting to achieve and whether there exists any related work in the literature. If the data is manually collected, then explain how. 
+
+
+
+
+## Data Source
+
+Data related things... Did you get it from somewhere, was it clean, or did you collect it yourself? Who is the owner, is it publicly available, etc.
+If possible, leave a [link](some url) here where I can reach the raw data.
+
+
+## Related Work
+
+A potential literature search... Also if the data is used somewhere else, note those other studies. 
+
+
+
+# Preprocessing
+
+Explain the steps of preprocessing you applied.
+
+## Cleaning
+
+## Imputation
+
+## Anomaly detection
+
+## Feature extraction
+
+## Dimensionality reduction
+
+
+
+# Methodology
+
+Now that the data is ready for processing, how did you do it? Explain the models you used, the parameters you have chosen, and the results you obtained.
+
+## Model training
+
+## Evaluation of results
+
+
+# Discussion
+
+You should now discuss your results and derive a wisdom out of this study. 
