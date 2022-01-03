@@ -216,6 +216,24 @@ Explain the steps of preprocessing you applied.
 ## Anomaly detection
 
 ## Feature extraction
+```{r}
+library(lubridate)
+
+# Standardization expect timestamp, date, wind speed
+df_mean <- apply(df[2:14], 2, mean)
+apply(df[2:14], 2, range)
+df_scaled <- cbind(df %>% select(timestamp), df %>% select(-timestamp) %>% select(-wind.speed) %>% scale(), df %>% select(wind.speed))
+df_scaled
+apply(df_scaled, 2, range)
+
+df
+
+df$h <- NULL
+df
+# Create Time Representations
+# df$date = as_datetime(df$timestamp)
+```
+
 
 ## Dimensionality reduction
 
