@@ -223,7 +223,7 @@ print("Furthermore, there are some research which uses deep learning models. All
 \newpage
 # Preprocessing
 
-Explain the steps of preprocessing you applied.
+<!-- Explain the steps of preprocessing you applied.-->
 
 ## Cleaning
 
@@ -235,7 +235,57 @@ print("Since information of height is manually adjusted by us, it is not informa
 df$h <- NULL
 ```
 
+```{r, results='asis'}
+print("We remove wind.speed=-1 samples from beginning and end since interpolation is not possible (explained in detail in the next section)")
+```
+
+
+```{r}
+delete_index_first = 1
+delete_index_last = nrow(df)
+
+for(i in df$wind.speed) {       # for-loop over columns
+  if (i == -1){
+    delete_index_first = delete_index_first + 1
+  }
+  else{
+    break
+  }
+}
+
+for(i in nrow(df):1) {       # for-loop over columns
+  if (df$wind.speed[i] == -1){
+    delete_index_last = delete_index_last - 1
+  }
+  else{
+    break
+  }
+}
+
+df_clean = df[delete_index_first:delete_index_last, ]
+
+```
+
+```{r}
+print("remained dataframe:")
+df_clean
+```
+
 ## Imputation
+```{r, results='asis'}
+print("We interpolate wind speed because of frequency mismatch.")
+```
+
+
+```{r}
+library(zoo)
+
+print(head(df_clean$wind.speed, 100))
+df_clean$wind.speed[df_clean$wind.speed == -1] <- NA
+df_clean$wind.speed <- na.approx(df_clean$wind.speed)
+print(head(df_clean$wind.speed, 100))
+```
+
 
 ## Anomaly detection
 
