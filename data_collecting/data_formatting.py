@@ -137,3 +137,10 @@ if __name__ == "__main__":
 
     data = pd.concat([data, data2], ignore_index=True)
     data.to_csv(p_join(config.paths.save_folder, "combined.csv"), index=False)
+    
+    data_wind = pd.concat([data_wind, data_wind2], ignore_index=True)
+    data_wind.to_csv(p_join(config.paths.save_folder, "data_wind.csv"), index=False)
+
+    data_drone = pd.concat([data_drone, data_drone2], ignore_index=True)
+    data_drone.to_csv(p_join(config.paths.save_folder, "data_drone.csv"), index=False)
+    
