@@ -337,6 +337,44 @@ print(apply(df_clean_scaled, 2, range))
 
 ## Dimensionality reduction
 
+```{r, results='asis'}
+print("We used correletion to observe if columns are related/informative or not. As we can see below, the least one is bat according to GainRatio. Hence we can remove it")
+```
+
+```{r}
+library(rmarkdown) # used for syntax highlighting
+library(knitr)
+library(dplyr)
+library(readr)
+library(stringr)
+library(lubridate)
+library(xts)
+library(sp)
+library(CORElearn)
+
+attrEval(wind.speed ~ ., df_clean_scaled %>% select(-timestamp), estimator = "GainRatio")
+attrEval(wind.speed ~ ., df_clean_scaled %>% select(-timestamp), estimator = "InfGain")
+attrEval(wind.speed ~ ., df_clean_scaled %>% select(-timestamp), estimator = "Gini")
+attrEval(wind.speed ~ ., df_clean_scaled %>% select(-timestamp), estimator = "Relief")
+attrEval(wind.speed ~ ., df_clean_scaled %>% select(-timestamp), estimator = "RReliefFequalK")
+attrEval(wind.speed ~ ., df_clean_scaled %>% select(-timestamp), estimator = "MSEofMean")
+# attrEval(wind.speed ~ ., df_clean_scaled %>% select(-timestamp), estimator = "MSEofModel")
+
+df_clean_scaled$bat <- NULL
+```
+
+```{r, results='asis'}
+print("We used PCA for dimensionality reduction.")
+```
+
+```{r}
+pca <- princomp(df_clean_scaled %>% select(-timestamp))
+loadings(pca)
+
+new.df <- data.frame(pca$scores[, 1:10], wind.speed = df_clean_scaled$wind.speed)
+head(new.df, 20)
+
+```
 
 
 # Methodology
