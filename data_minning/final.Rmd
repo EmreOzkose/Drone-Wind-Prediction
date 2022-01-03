@@ -38,8 +38,13 @@ If possible, leave a [link](some url) here where I can reach the raw data.
 
 
 ## Related Work
-
-A potential literature search... Also if the data is used somewhere else, note those other studies. 
+```{r}
+print("There are some works which their prediction methods does notinclude machine learning methods.")
+print("Perozzi et al. propose a wind estimation solution to help wind speed sensor.In the case wind sensor does not exist, or the wind sensor gives noisy outputs, they introduce an algorithm to compensate this void using inertial sensor data of quadrotors.")
+print("Another research without using an extra anemometer sensor which measures wind speed is proposed by Neuman et al for micro UAVs. This model does not require any additional sensor.Hence, it enables making more lightweight micro UAVs for producers.Also it provides more position for payload and other possible sensors.")
+print("Furthermore, there are some research which uses deep learning models. Allison et al. proposed a model utilizing pitch and roll values of small quadcopter as input values to LSTM networks to predict
+wind velocities in a turbulent wind environments without ant wind sensor.")
+```
 
 
 
