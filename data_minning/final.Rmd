@@ -1,5 +1,6 @@
 ---
 title: "BBM713 - Data Mining"
+subtitle: "2021 Fall Final Project Report"
 author: "Doç. Dr. Burkay Genç and Some Other Guy"
 date: "due 05/01/2022"
 output:
@@ -8,20 +9,25 @@ output:
     theme: journal
     number_sections: yes
     df_print: tibble
-  pdf_document:
-    toc: yes
-subtitle: 2021 Fall Final Project Report
 ---
 
 # Summary
 
-Here we outline our project and explain our motivation in doing this project in one paragraph.
+```{r}
+print("Wind speed prediction problem is determining instant airspeed without using any type of anemometers which are mechanical wind speed measurement devices. Deploying a anemometer in a drone,unmanned air vehicle, can give accurate results, it comes at extra requirements,though.Especially lightweight drones consists of  minimum number of parts with minimum weights.Thus, predicting wind speed without a wind sensor become important at this point.We investigated this problem via using kinematics sensor data,including velocity values for each x,y,z dimensions , acceleratation values , provided by on-board sensors on DJI Tello drone which is very lightweight drone.")
+
+```
+
+Your code should be runnable. You should finally knit this document as a pdf file and submit the pdf file (only) at [this form](https://forms.gle/idXra1iXMeg8poUr6).
+
 
 # Introduction
-<!-- It is time to explain more about where the data comes from, why we are doing this, what are we expecting to achieve and whether there exists any related work in the literature. If the data is manually collected, then explain how.  -->
+
+It is time to explain more about where the data comes from, why we are doing this, what are we expecting to achieve and whether there exists any related work in the literature. If the data is manually collected, then explain how.
+
 ## Data Source
 <!-- Data related things... Did you get it from somewhere, was it clean, or did you collect it yourself? Who is the owner, is it publicly available, etc. If possible, leave a [link](some url) here where I can reach the raw data. -->
-We collect our own data. Our data collection setup consists of 2 main component: 1) Drone with controller on phone. 2) anemometer. With this setup, we have 2 separate data stream during collection. 
+We collect our own data. Our data collection setup consists of 2 main component: 1) Drone with controller on phone. 2) anemometer. With this setup, we have 2 separate data stream during collection.
 
 We have [DJI Tello Drone](https://store.dji.com/product/tello?vid=38421) which is small and easy to use. Drone have various sensors and can be also used [programatically](https://github.com/dji-sdk/Tello-Python). We tried to move Drone programatically, however since it is not stable enough, we decided to move it manually. Available data to collect with Drone are pitch, roll, yaw, speeds of axis x/y/z, temperature, height, pressure, time, acceleration of axis x/y/z. Drone movement pipeline during data collection is given below:
 
@@ -53,10 +59,10 @@ for(i in df_drone %>% names()) {       # for-loop over columns
   if (i == "timestamp"){
     next
   }
-  
+
   cat("$", i, "\n", sep = "")
   print(summary(df_drone[[i]]))
-  cat("\n")  
+  cat("\n")
 }
 
 ```
@@ -75,10 +81,10 @@ for(i in df_wind %>% names()) {       # for-loop over columns
   if (i == "timestamp"){
     next
   }
-  
+
   cat("$", i, "\n", sep = "")
   print(summary(df_wind[[i]]))
-  cat("\n")  
+  cat("\n")
 }
 
 ```
@@ -97,7 +103,7 @@ Since wind affects behaviour of Drone, we want to show relation between some fea
 #### Wind Speed Histogram
 :
 ```{r}
-library(ggplot2) 
+library(ggplot2)
 
 p1 <- ggplot(df, aes(x=wind.speed)) + geom_histogram(binwidth = 0.05) + xlab("windspeed")
 p1
@@ -118,7 +124,7 @@ p1 <- ggplot(df, aes(x=vgx)) + geom_histogram(binwidth=5) + xlab("x")
 p2 <- ggplot(df, aes(x=vgy)) + geom_histogram(binwidth=5) + xlab("y")
 p3 <- ggplot(df, aes(x=vgz)) + geom_histogram(binwidth=5) + xlab("z")
 
-grid.arrange(grobs = list(p1, p2, p3), 
+grid.arrange(grobs = list(p1, p2, p3),
             labels = c("axis x", "axis y", "axis z"),
             nrow=3)
 ```
@@ -130,7 +136,7 @@ p1 <- ggplot(df, aes(x=agx)) + geom_histogram(binwidth=5) + xlab("x")
 p2 <- ggplot(df, aes(x=agy)) + geom_histogram(binwidth=5) + xlab("y")
 p3 <- ggplot(df, aes(x=agz)) + geom_histogram(binwidth=50) + xlab("z")
 df$agz
-grid.arrange(grobs = list(p1, p2, p3), 
+grid.arrange(grobs = list(p1, p2, p3),
             labels = c("axis x", "axis y", "axis z"),
             nrow=3)
 ```
@@ -142,7 +148,7 @@ p1 <- ggplot(df, aes(x=pitch)) + geom_histogram(binwidth=1) + xlab("pitch")
 p2 <- ggplot(df, aes(x=roll)) + geom_histogram(binwidth=1) + xlab("roll")
 p3 <- ggplot(df, aes(x=yaw)) + geom_histogram(binwidth=1) + xlab("yaw")
 
-grid.arrange(grobs = list(p1, p2, p3), 
+grid.arrange(grobs = list(p1, p2, p3),
             labels = c("axis x", "axis y", "axis z"),
             nrow=3)
 ```
@@ -154,7 +160,7 @@ p1 <- ggplot(df, aes(x=pitch, y=wind.speed)) + geom_point()
 p2 <- ggplot(df, aes(x=roll, y=wind.speed)) + geom_point()
 p3 <- ggplot(df, aes(x=yaw, y=wind.speed)) + geom_point()
 
-grid.arrange(grobs = list(p1, p2, p3), 
+grid.arrange(grobs = list(p1, p2, p3),
             labels = c("axis x", "axis y", "axis z"),
             nrow=3)
 # ggplot(df, aes(x=h, y=wind.speed, color=h_group)) + geom_point() + facet_wrap(~ h_group)
@@ -167,7 +173,7 @@ p1 <- ggplot(df, aes(x=vgx, y=wind.speed)) + geom_point()
 p2 <- ggplot(df, aes(x=vgy, y=wind.speed)) + geom_point()
 p3 <- ggplot(df, aes(x=vgz, y=wind.speed)) + geom_point()
 
-grid.arrange(grobs = list(p1, p2, p3), 
+grid.arrange(grobs = list(p1, p2, p3),
             labels = c("axis x", "axis y", "axis z"),
             nrow=3)
 # ggplot(df, aes(x=h, y=wind.speed, color=h_group)) + geom_point() + facet_wrap(~ h_group)
@@ -180,28 +186,37 @@ p1 <- ggplot(df, aes(x=agx, y=wind.speed)) + geom_point()
 p2 <- ggplot(df, aes(x=agy, y=wind.speed)) + geom_point()
 p3 <- ggplot(df, aes(x=agz, y=wind.speed)) + geom_point()
 
-grid.arrange(grobs = list(p1, p2, p3), 
+grid.arrange(grobs = list(p1, p2, p3),
             labels = c("axis x", "axis y", "axis z"),
             nrow=3)
 # ggplot(df, aes(x=h, y=wind.speed, color=h_group)) + geom_point() + facet_wrap(~ h_group)
 ```
 
-## Related Work
-<!-- A potential literature search... Also if the data is used somewhere else, note those other studies.  -->
 
-Our primary motivation is ...
+
+## Related Work
+```{r}
+print("There are some works which their prediction methods does notinclude machine learning methods.")
+print("Perozzi et al. propose a wind estimation solution to help wind speed sensor.In the case wind sensor does not exist, or the wind sensor gives noisy outputs, they introduce an algorithm to compensate this void using inertial sensor data of quadrotors.")
+print("Another research without using an extra anemometer sensor which measures wind speed is proposed by Neuman et al for micro UAVs. This model does not require any additional sensor.Hence, it enables making more lightweight micro UAVs for producers.Also it provides more position for payload and other possible sensors.")
+print("Furthermore, there are some research which uses deep learning models. Allison et al. proposed a model utilizing pitch and roll values of small quadcopter as input values to LSTM networks to predict
+wind velocities in a turbulent wind environments without ant wind sensor.")
+```
+
 
 
 # Preprocessing
-<!-- Explain the steps of pre-processing you applied. -->
+
+Explain the steps of preprocessing you applied.
+
 ## Cleaning
 
+## Imputation
+
+## Anomaly detection
+
+## Feature extraction
 ```{r}
-library(knitr)
-library(tidyr)
-library(dplyr)
-library(readr)
-library(stringr)
 library(lubridate)
 
 # Standardization expect timestamp, date, wind speed
@@ -219,32 +234,10 @@ df
 # df$date = as_datetime(df$timestamp)
 ```
 
-```{r}
-
-```
-## Imputation
-
-```{r}
-
-```
-
-## Anomaly detection
-
-```{r}
-
-```
-
-## Feature extraction
-
-```{r}
-
-```
 
 ## Dimensionality reduction
 
-```{r}
 
-```
 
 # Methodology
 
