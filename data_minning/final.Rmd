@@ -13,12 +13,9 @@ output:
 
 # Summary
 
-Here we outline our project and explain our motivation in doing this project in one paragraph.
-
-In every part of the below document, you should both include textual explanations (like this) and R code of your study:
-
 ```{r}
-print("like this...")
+print("Wind speed prediction problem is determining instant airspeed without using any type of anemometers which are mechanical wind speed measurement devices. Deploying a anemometer in a drone,unmanned air vehicle, can give accurate results, it comes at extra requirements,though.Especially lightweight drones consists of  minimum number of parts with minimum weights.Thus, predicting wind speed without a wind sensor become important at this point.We investigated this problem via using kinematics sensor data,including velocity values for each x,y,z dimensions , acceleratation values , provided by on-board sensors on DJI Tello drone which is very lightweight drone.")
+
 ```
 
 Your code should be runnable. You should finally knit this document as a pdf file and submit the pdf file (only) at [this form](https://forms.gle/idXra1iXMeg8poUr6).
