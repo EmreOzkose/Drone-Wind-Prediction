@@ -326,12 +326,12 @@ print("We apply standardization as a pre-preprocess")
 ```{r}
 library(lubridate)
 
-# Standardization expect timestamp, date, wind speed
-df_mean <- apply(df[2:14], 2, mean)
+# Standardization expect time-stamp, wind speed
+# df_clean_mean <- apply(df_clean[2:14], 2, mean)
 
-apply(df[2:14], 2, range)
-df_scaled <- cbind(df %>% select(timestamp), df %>% select(-timestamp) %>% select(-wind.speed) %>% scale(), df %>% select(wind.speed))
-apply(df_scaled, 2, range)
+print(apply(df_clean[2:14], 2, range))
+df_clean_scaled <- cbind(df_clean %>% select(timestamp), df_clean %>% select(-timestamp) %>% select(-wind.speed) %>% scale(), df_clean %>% select(wind.speed))
+print(apply(df_clean_scaled, 2, range))
 ```
 
 
