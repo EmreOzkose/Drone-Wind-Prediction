@@ -289,6 +289,34 @@ print(head(df_clean$wind.speed, 100))
 
 ## Anomaly detection
 
+```{r, results='asis'}
+print("")
+```
+
+
+```{r}
+library(fpc)
+library(dplyr)
+library(ggplot2)
+library(DMwR2)
+
+outs <- dbscan.outliers(df_clean, 
+                        eps = 3, 
+                        scale=TRUE)
+print(outs$positions)
+
+df_clean$outlier = 0
+df_clean$outlier[df_clean$positions] = 1
+
+ggplot(houseData, aes(
+  x = vgx, 
+  y = wind.speed, 
+  color = as.factor(outlier))) + 
+  geom_point() + 
+  theme(legend.position="bottom")
+
+```
+
 ## Feature extraction
 
 ```{r, results='asis'}
