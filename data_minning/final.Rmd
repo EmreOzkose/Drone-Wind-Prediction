@@ -25,13 +25,173 @@ Your code should be runnable. You should finally knit this document as a pdf fil
 
 It is time to explain more about where the data comes from, why we are doing this, what are we expecting to achieve and whether there exists any related work in the literature. If the data is manually collected, then explain how. 
 
-
-
-
 ## Data Source
+<!-- Data related things... Did you get it from somewhere, was it clean, or did you collect it yourself? Who is the owner, is it publicly available, etc. If possible, leave a [link](some url) here where I can reach the raw data. -->
+We collect our own data. Our data collection setup consists of 2 main component: 1) Drone with controller on phone. 2) anemometer. With this setup, we have 2 separate data stream during collection. 
 
-Data related things... Did you get it from somewhere, was it clean, or did you collect it yourself? Who is the owner, is it publicly available, etc.
-If possible, leave a [link](some url) here where I can reach the raw data.
+We have [DJI Tello Drone](https://store.dji.com/product/tello?vid=38421) which is small and easy to use. Drone have various sensors and can be also used [programatically](https://github.com/dji-sdk/Tello-Python). We tried to move Drone programatically, however since it is not stable enough, we decided to move it manually. Available data to collect with Drone are pitch, roll, yaw, speeds of axis x/y/z, temperature, height, pressure, time, acceleration of axis x/y/z. Drone movement pipeline during data collection is given below:
+
+1. Take off of the Drone
+2. Moving te Drone forward approximately 10 meters
+3. Bringing the Drone back in the same way
+4. Going step 2 if there is enough charge else landing of the Drone
+
+Another component of the setup is collecting wind speed data with an anemometer. We bought an [anemometre](https://www.trendyol.com/unit/uni-t-ut-363-mini-dijital-ruzgar-olcer-anemometre-p-56053867?boutiqueId=61&merchantId=218943) and a [tripod](https://www.trendyol.com/microcase/3-ayak-sabitleyici-aluminyum-cep-telefonu-kamera-dslr-led-light-tripodu-200-cm-al2630-p-110114864?boutiqueId=61&merchantId=108916) to collect wind data. We combine 2 data source by synchronizing time steps. However we have a challenging issue: different frequencies of each stream. Drone has ~24 fps, but frequency of anemometer is 1 sample per second. We explain how to handle this issue in pre-processing section.
+
+### Step 1: Introducing Drone Data
+
+```{r}
+library(tidyr)
+library(dplyr)
+library(tibble)
+
+set.seed(1024)
+
+
+data_drone_path = "/home/emre/workspace/master/cmp713/project/data_final/data_drone.csv"
+df_drone = as_tibble(read.csv(data_drone_path, header = TRUE))
+head(df_drone, 10)
+```
+
+```{r summary of cols drone}
+
+for(i in df_drone %>% names()) {       # for-loop over columns
+  if (i == "timestamp"){
+    next
+  }
+  
+  cat("$", i, "\n", sep = "")
+  print(summary(df_drone[[i]]))
+  cat("\n")  
+}
+
+```
+
+### Step 2: Introducing Wind Data
+
+```{r}
+data_wind_path = "/home/emre/workspace/master/cmp713/project/data_final/data_wind.csv"
+df_wind = as_tibble(read.csv(data_wind_path, header = TRUE))
+head(df_wind, 10)
+```
+
+```{r summary of cols wind}
+
+for(i in df_wind %>% names()) {       # for-loop over columns
+  if (i == "timestamp"){
+    next
+  }
+  
+  cat("$", i, "\n", sep = "")
+  print(summary(df_wind[[i]]))
+  cat("\n")  
+}
+
+```
+
+### Step 3: Combining Two Data Source
+Since frequencies of two stream are not same, when we combine streams, there was None values for some rows. For example if we got 20 Drone samples between 16:10:02- 16:10:03, we got only 1 wind sample. Hence we add combine these data by concating early Drone sample with Drone sample. Wind value of remaining samples of Drone data is set to "-1".
+```{r}
+df_path = "/home/emre/workspace/master/cmp713/project/data_final/combined.csv"
+df = as_tibble(read.csv(df_path, header = TRUE))
+head(df, 10)
+```
+
+### Step 4: Data Analysis and Relations
+Since wind affects behaviour of Drone, we want to show relation between some features.
+
+#### Wind Speed Histogram
+:
+```{r}
+library(ggplot2) 
+
+p1 <- ggplot(df, aes(x=wind.speed)) + geom_histogram(binwidth = 0.05) + xlab("windspeed")
+p1
+```
+
+#### Height Histogram
+:
+```{r}
+ggplot(df, aes(x=h)) + geom_histogram(binwidth=5) + xlab("h")
+```
+
+#### Speed Histograms
+:
+```{r}
+library(gridExtra)
+
+p1 <- ggplot(df, aes(x=vgx)) + geom_histogram(binwidth=5) + xlab("x")
+p2 <- ggplot(df, aes(x=vgy)) + geom_histogram(binwidth=5) + xlab("y")
+p3 <- ggplot(df, aes(x=vgz)) + geom_histogram(binwidth=5) + xlab("z")
+
+grid.arrange(grobs = list(p1, p2, p3), 
+            labels = c("axis x", "axis y", "axis z"),
+            nrow=3)
+```
+
+#### Acceleration Histograms
+:
+```{r}
+p1 <- ggplot(df, aes(x=agx)) + geom_histogram(binwidth=5) + xlab("x")
+p2 <- ggplot(df, aes(x=agy)) + geom_histogram(binwidth=5) + xlab("y")
+p3 <- ggplot(df, aes(x=agz)) + geom_histogram(binwidth=50) + xlab("z")
+df$agz
+grid.arrange(grobs = list(p1, p2, p3), 
+            labels = c("axis x", "axis y", "axis z"),
+            nrow=3)
+```
+
+#### Pitch/Roll/Yaw Histograms
+:
+```{r}
+p1 <- ggplot(df, aes(x=pitch)) + geom_histogram(binwidth=1) + xlab("pitch")
+p2 <- ggplot(df, aes(x=roll)) + geom_histogram(binwidth=1) + xlab("roll")
+p3 <- ggplot(df, aes(x=yaw)) + geom_histogram(binwidth=1) + xlab("yaw")
+
+grid.arrange(grobs = list(p1, p2, p3), 
+            labels = c("axis x", "axis y", "axis z"),
+            nrow=3)
+```
+
+#### Relation between Wind Speed and pitch/roll/yaw
+:
+```{r}
+p1 <- ggplot(df, aes(x=pitch, y=wind.speed)) + geom_point()
+p2 <- ggplot(df, aes(x=roll, y=wind.speed)) + geom_point()
+p3 <- ggplot(df, aes(x=yaw, y=wind.speed)) + geom_point()
+
+grid.arrange(grobs = list(p1, p2, p3), 
+            labels = c("axis x", "axis y", "axis z"),
+            nrow=3)
+# ggplot(df, aes(x=h, y=wind.speed, color=h_group)) + geom_point() + facet_wrap(~ h_group)
+```
+
+#### Relation between Wind Speed and Speeds
+:
+```{r}
+p1 <- ggplot(df, aes(x=vgx, y=wind.speed)) + geom_point()
+p2 <- ggplot(df, aes(x=vgy, y=wind.speed)) + geom_point()
+p3 <- ggplot(df, aes(x=vgz, y=wind.speed)) + geom_point()
+
+grid.arrange(grobs = list(p1, p2, p3), 
+            labels = c("axis x", "axis y", "axis z"),
+            nrow=3)
+# ggplot(df, aes(x=h, y=wind.speed, color=h_group)) + geom_point() + facet_wrap(~ h_group)
+```
+
+#### Relation between Wind Speed and Accelerations
+:
+```{r}
+p1 <- ggplot(df, aes(x=agx, y=wind.speed)) + geom_point()
+p2 <- ggplot(df, aes(x=agy, y=wind.speed)) + geom_point()
+p3 <- ggplot(df, aes(x=agz, y=wind.speed)) + geom_point()
+
+grid.arrange(grobs = list(p1, p2, p3), 
+            labels = c("axis x", "axis y", "axis z"),
+            nrow=3)
+# ggplot(df, aes(x=h, y=wind.speed, color=h_group)) + geom_point() + facet_wrap(~ h_group)
+```
+
 
 
 ## Related Work
