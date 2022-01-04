@@ -288,7 +288,40 @@ print(head(df_clean$wind.speed, 100))
 
 
 ## Anomaly detection
+```{r}
 
+library(dplyr)
+library(ggplot2)
+
+library(cluster)
+library(fpc)
+
+library(dbscan)
+
+
+
+outs <- function(data) {
+  
+  cl <- dbscan(data, eps=0.9, MinPts=5)
+  posOuts <- which(cl$cluster == 0)
+  list(positions = posOuts,
+       outliers = data[posOuts,],
+       dbscanResults = cl)
+  }
+dbscan.outliers <- outs(df_clean)
+print(dbscan.outliers$positions)
+
+df_clean$outlier = 0
+df_clean$outlier[df_clean$positions] = 1
+
+ggplot(, aes(
+  x = vgx, 
+  y = wind.speed, 
+  color = as.factor(outlier))) + 
+  geom_point() + 
+  theme(legend.position="bottom")
+
+```
 ```{r, results='asis'}
 print("")
 ```
