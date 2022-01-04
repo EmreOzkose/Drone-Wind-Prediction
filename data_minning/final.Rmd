@@ -378,12 +378,79 @@ head(new.df, 20)
 
 
 # Methodology
+```{r}
+print("Train and test splitting is conducted.")
+library(rpart)
+library(rpart.plot)
 
-Now that the data is ready for processing, how did you do it? Explain the models you used, the parameters you have chosen, and the results you obtained.
+library(caTools)
 
-## Model training
+set.seed(101) 
+sample = sample.split(new.df$wind.speed, SplitRatio = .75)
+train = subset(new.df, sample == TRUE)
+test  = subset(new.df, sample == FALSE)
+print("Examples of Training Samples")
+head(train, 5)
+print("Examples of Test Samples")
+head(test, 5)
 
+
+
+```
+
+
+```{r}
+library(rpart)
+library(rpart.plot)
+library(mlbench)
+library(DMwR2)
+library(e1071)
+library(performanceEstimation)
+library(nnet)
+
+nr <- nnet(wind.speed ~ ., train,
+           linout=TRUE,
+           trace=FALSE,
+           size=6,
+           decay=0.02,
+           maxit=10000)
+psnr <- predict(nr, test)
+mean(abs(psnr-test$wind.speed))
+
+plt <- plot(as.vector(test$wind.speed), as.vector(psnr))
+abline(0, 1)
+
+```
 ## Evaluation of results
+```{r}
+
+
+r_svm <- performanceEstimation(
+  PredTask(wind.speed ~ ., new.df),
+  Workflow(learner = "svm"),
+  EstimationTask(metrics = c("mse", "mae"),
+                 method = CV(nReps = 8, nFolds = 5)))
+
+
+summary(r_svm)
+
+```
+```{r}
+
+
+r_decisiontree <- performanceEstimation(
+  PredTask(wind.speed ~ ., new.df),
+  Workflow(learner = "rpartXse"),
+  EstimationTask(metrics = c("mse", "mae"),
+                 method = CV(nReps = 8, nFolds = 5)))
+
+
+summary(r_decisiontree)
+
+```
+Now that the data is ready for processing, how did you do it? Explain the models you used, the parameters you have chosen, and the results you obtained
+
+
 
 
 # Discussion
