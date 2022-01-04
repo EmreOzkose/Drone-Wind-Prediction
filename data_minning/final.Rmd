@@ -215,6 +215,7 @@ grid.arrange(grobs = list(p1, p2, p3),
 ## Related Work
 ```{r, results='asis'}
 print("There are some works which their prediction methods does not include machine learning methods.")
+print("Petrich et al. uses different sensors to estimate wind patterns for small UAVs.")
 print("Perozzi et al. propose a wind estimation solution to help wind speed sensor.In the case wind sensor does not exist, or the wind sensor gives noisy outputs, they introduce an algorithm to compensate this void using inertial sensor data of quadrotors.")
 print("Another research without using an extra anemometer sensor which measures wind speed is proposed by Neuman et al for micro UAVs. This model does not require any additional sensor.Hence, it enables making more lightweight micro UAVs for producers.Also it provides more position for payload and other possible sensors.")
 print("Furthermore, there are some research which uses deep learning models. Allison et al. proposed a model utilizing pitch and roll values of small quadcopter as input values to LSTM networks to predict wind velocities in a turbulent wind environments without ant wind sensor.")
@@ -618,4 +619,9 @@ When it comes to decision tree and svm scores, these two model gives very close 
 
 
 ```
-You should now discuss your results and derive a wisdom out of this study.
+
+# References
+[1] Petrich, Jan, and Kamesh Subbarao. "On-board wind speed estimation for uavs." AIAA Guidance, Navigation, and Control Conference. 2011.
+[2] Perozzi, Gabriele, et al. "Wind estimation algorithm for quadrotors using detailed aerodynamic coefficients." 2018 Annual American Control Conference (ACC). IEEE, 2018.
+[3] Neumann, Patrick P., and Matthias Bartholmai. "Real-time wind estimation on a micro unmanned aerial vehicle using its inertial measurement unit." Sensors and Actuators A: Physical 235 (2015): 300-310.
+[4] Allison, Sam, He Bai, and Balaji Jayaraman. "Wind estimation using quadcopter motion: A machine learning approach." Aerospace Science and Technology 98 (2020): 105699.
