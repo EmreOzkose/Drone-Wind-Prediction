@@ -53,7 +53,7 @@ library(tibble)
 set.seed(1024)
 
 
-data_drone_path = "/home/emre/workspace/master/cmp713/project/Drone-Wind-Prediction/data/processed/data_drone.csv"
+data_drone_path = "C:/Users/User/Desktop/Drone-Wind-Prediction-main/Drone-Wind-Prediction-main/data/processed/data_drone.csv"
 df_drone = as_tibble(read.csv(data_drone_path, header = TRUE))
 head(df_drone, 10)
 ```
@@ -75,7 +75,7 @@ for(i in df_drone %>% names()) {       # for-loop over columns
 ### Step 2: Introducing Wind Data
 
 ```{r}
-data_wind_path = "/home/emre/workspace/master/cmp713/project/Drone-Wind-Prediction/data/processed/data_wind.csv"
+data_wind_path = "C:/Users/User/Desktop/Drone-Wind-Prediction-main/Drone-Wind-Prediction-main/data/processed/data_wind.csv"
 df_wind = as_tibble(read.csv(data_wind_path, header = TRUE))
 head(df_wind, 10)
 ```
@@ -100,7 +100,7 @@ print("Since frequencies of two stream are not same, when we combine streams, th
 ```
 
 ```{r}
-df_path = "/home/emre/workspace/master/cmp713/project/Drone-Wind-Prediction/data/processed/combined.csv"
+df_path = "C:/Users/User/Desktop/Drone-Wind-Prediction-main/Drone-Wind-Prediction-main/data/processed/combined.csv"
 df = as_tibble(read.csv(df_path, header = TRUE))
 head(df, 10)
 ```
@@ -109,6 +109,7 @@ head(df, 10)
 ```{r}
 print("Since wind affects behaviour of Drone, we want to show relation between some features.")
 ```
+\newpage
 
 #### Wind Speed Histogram
 :
@@ -213,7 +214,7 @@ grid.arrange(grobs = list(p1, p2, p3),
 \newpage
 ## Related Work
 ```{r, results='asis'}
-print("There are some works which their prediction methods does notinclude machine learning methods.")
+print("There are some works which their prediction methods does not include machine learning methods.")
 print("Perozzi et al. propose a wind estimation solution to help wind speed sensor.In the case wind sensor does not exist, or the wind sensor gives noisy outputs, they introduce an algorithm to compensate this void using inertial sensor data of quadrotors.")
 print("Another research without using an extra anemometer sensor which measures wind speed is proposed by Neuman et al for micro UAVs. This model does not require any additional sensor.Hence, it enables making more lightweight micro UAVs for producers.Also it provides more position for payload and other possible sensors.")
 print("Furthermore, there are some research which uses deep learning models. Allison et al. proposed a model utilizing pitch and roll values of small quadcopter as input values to LSTM networks to predict wind velocities in a turbulent wind environments without ant wind sensor.")
@@ -288,6 +289,12 @@ print(head(df_clean$wind.speed, 100))
 
 
 ## Anomaly detection
+
+```{r, results='asis'}
+print("")
+```
+
+
 ```{r}
 
 library(dplyr)
@@ -309,46 +316,106 @@ outs <- function(data) {
        dbscanResults = cl)
   }
 dbscan.outliers <- outs(df_clean)
-print(dbscan.outliers$positions)
+
+#print(dbscan.outliers$positions)
 
 df_clean$outlier = 0
 df_clean$outlier[df_clean$positions] = 1
 
-ggplot(, aes(
-  x = vgx, 
-  y = wind.speed, 
-  color = as.factor(outlier))) + 
-  geom_point() + 
-  theme(legend.position="bottom")
+
 
 ```
-```{r, results='asis'}
-print("")
-```
-
-
+\newpage
 ```{r}
-library(fpc)
-library(dplyr)
-library(ggplot2)
-library(DMwR2)
 
-outs <- dbscan.outliers(df_clean, 
-                        eps = 3, 
-                        scale=TRUE)
-print(outs$positions)
-
-df_clean$outlier = 0
-df_clean$outlier[df_clean$positions] = 1
-
-ggplot(houseData, aes(
+p1 <- ggplot(df_clean, aes(
   x = vgx, 
   y = wind.speed, 
   color = as.factor(outlier))) + 
   geom_point() + 
   theme(legend.position="bottom")
 
+p2 <-ggplot(df_clean, aes(
+  x = vgy, 
+  y = wind.speed, 
+  color = as.factor(outlier))) + 
+  geom_point() + 
+  theme(legend.position="bottom")
+
+p3 <- ggplot(df_clean, aes(
+  x = vgz, 
+  y = wind.speed, 
+  color = as.factor(outlier))) + 
+  geom_point() + 
+  theme(legend.position="bottom")
+
+grid.arrange(grobs = list(p1, p2, p3),
+            labels = c("vgx", "vgy", "vgz"),
+            nrow=3)
+
+
 ```
+\newpage
+```{r}
+
+p4 <- ggplot(df_clean, aes(
+  x = agx, 
+  y = wind.speed, 
+  color = as.factor(outlier))) + 
+  geom_point() + 
+  theme(legend.position="bottom")
+
+
+p5 <-ggplot(df_clean, aes(
+  x = agy, 
+  y = wind.speed, 
+  color = as.factor(outlier))) + 
+  geom_point() + 
+  theme(legend.position="bottom")
+
+p6 <-ggplot(df_clean, aes(
+  x = agz, 
+  y = wind.speed, 
+  color = as.factor(outlier))) + 
+  geom_point() + 
+  theme(legend.position="bottom")
+
+grid.arrange(grobs = list(p4, p5, p6),
+            labels = c("agx", "agy", "agz"),
+            nrow=3)
+
+```
+\newpage
+```{r}
+
+p7 <- ggplot(df_clean, aes(
+  x = pitch, 
+  y = wind.speed, 
+  color = as.factor(outlier))) + 
+  geom_point() + 
+  theme(legend.position="bottom")
+
+
+p8 <- ggplot(df_clean, aes(
+  x = roll, 
+  y = wind.speed, 
+  color = as.factor(outlier))) + 
+  geom_point() + 
+  theme(legend.position="bottom")
+
+p9 <- ggplot(df_clean, aes(
+  x = yaw, 
+  y = wind.speed, 
+  color = as.factor(outlier))) + 
+  geom_point() + 
+  theme(legend.position="bottom")
+
+grid.arrange(grobs = list(p7, p8, p9),
+            labels = c("pitch", "roll", "yaw"),
+            nrow=3)
+```
+\newpage
+
 
 ## Feature extraction
 
@@ -401,6 +468,7 @@ print("We used PCA for dimensionality reduction.")
 ```
 
 ```{r}
+df_clean_scaled$outlier <- NULL
 pca <- princomp(df_clean_scaled %>% select(-timestamp))
 loadings(pca)
 
@@ -411,6 +479,14 @@ head(new.df, 20)
 
 
 # Methodology
+
+Now that the data is ready for processing, how did you do it? Explain the models you used, the parameters you have chosen, and the results you obtained.
+```{r, results='asis'}
+print("We use three machine learning algorithms.These models are a decision tree,support vector machines(svm) and finally artificial neural network. ")
+
+```
+
+## Model training
 ```{r}
 print("Train and test splitting is conducted.")
 library(rpart)
@@ -444,9 +520,31 @@ library(nnet)
 nr <- nnet(wind.speed ~ ., train,
            linout=TRUE,
            trace=FALSE,
-           size=6,
-           decay=0.02,
-           maxit=10000)
+           size=4,
+           decay=0.04,
+           maxit=10)
+psnr <- predict(nr, test)
+mean(abs(psnr-test$wind.speed))
+
+plt <- plot(as.vector(test$wind.speed), as.vector(psnr))
+abline(0, 1)
+
+```
+```{r}
+library(rpart)
+library(rpart.plot)
+library(mlbench)
+library(DMwR2)
+library(e1071)
+library(performanceEstimation)
+library(nnet)
+
+nr <- nnet(wind.speed ~ ., train,
+           linout=TRUE,
+           trace=FALSE,
+           size=4,
+           decay=0.04,
+           maxit=1000)
 psnr <- predict(nr, test)
 mean(abs(psnr-test$wind.speed))
 
@@ -456,7 +554,7 @@ abline(0, 1)
 ```
 ## Evaluation of results
 ```{r}
-
+print("For nFold = 5")
 
 r_svm <- performanceEstimation(
   PredTask(wind.speed ~ ., new.df),
@@ -481,11 +579,43 @@ r_decisiontree <- performanceEstimation(
 summary(r_decisiontree)
 
 ```
-Now that the data is ready for processing, how did you do it? Explain the models you used, the parameters you have chosen, and the results you obtained
+
+\newpage
+```{r}
+print("We try nFold = 10")
+
+r_svm <- performanceEstimation(
+  PredTask(wind.speed ~ ., new.df),
+  Workflow(learner = "svm"),
+  EstimationTask(metrics = c("mse", "mae"),
+                 method = CV(nReps = 8, nFolds = 10)))
 
 
+summary(r_svm)
 
+```
+```{r}
+
+
+r_decisiontree <- performanceEstimation(
+  PredTask(wind.speed ~ ., new.df),
+  Workflow(learner = "rpartXse"),
+  EstimationTask(metrics = c("mse", "mae"),
+                 method = CV(nReps = 8, nFolds = 10)))
+
+
+summary(r_decisiontree)
+
+```
 
 # Discussion
+```{r,results='asis'}
 
+print("In this project, we experimented three different machine learning algorithms to estimate value of instant wind.
+In order to measure our success for this prediction which is regression problem, we use two different metric which are mean squared error (mse) and mean absolute error(mae) and we mainly focus on mean absolute error.Collecting our data set manually with DJI tello drone, we created ,cleaned and conducted necessary arrangements in data set.It included noisy and unwanted parts but we removed them as possible as we can.After data set processing,  We trained decision tree and support vector machine using cross validation concept.
+As we showed our mse and mae scores , conducting regression on this data set can be said as successful.To illustrate, artificial neural network model gives 0.002 mae error score which is 15 times better than support vector machine score 0.03 which is also good mae score.
+When it comes to decision tree and svm scores, these two model gives very close mae scores to each other.")
+
+
+```
 You should now discuss your results and derive a wisdom out of this study.
